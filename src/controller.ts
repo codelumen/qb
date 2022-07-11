@@ -10,22 +10,14 @@ export abstract class Controller<T> {
     abstract get nest(): ControllerFabric<T>[];
 
     async handle(event: T) {
-        let permissionRequest: any = this.permission(event);
-        if (permissionRequest instanceof Promise) {
-            if (!(await permissionRequest)) return;
+        if (!(await this.permission(event))) {
+            if (this.endpoint) return;
         } else {
-            if (!permissionRequest) return;
+            await this.callback(event);
         }
 
-        let r: any = this.callback(event);
-        if (r instanceof Promise) {
-            await r;
-        }
-
-        if (!this.endpoint) {
-            for (let nestedControllerInstance of this.nestedControllersInstances) {
-                nestedControllerInstance.handle(event);
-            }
+        for (let nestedControllerInstance of this.nestedControllersInstances) {
+            nestedControllerInstance.handle(event);
         }
     }
 

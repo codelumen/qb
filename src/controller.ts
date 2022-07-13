@@ -1,16 +1,21 @@
-export type ControllerFabric<T> = new (...args : any[]) => Controller<T>;
+export type ControllerConstructor<T> = new (...args : any[]) => Controller<T>;
 
 export abstract class Controller<T> {
     private nestedControllersInstances: Controller<T>[] = [];
     public endpoint = false;
 
-    abstract permission(event: T): boolean | Promise<boolean>;
-    abstract callback(event: T): any | Promise<any>;
+    public validation(event: T): boolean | Promise<boolean> { return true }
+    public permission(event: T): boolean | Promise<boolean> { return true }
+    public callback(event: T): any | Promise<any> { }
+    public denied(event: T): any | Promise<any> {}
 
-    abstract get nest(): ControllerFabric<T>[];
+    public get nested(): ControllerConstructor<T>[] { return [] }
 
     async handle(event: T) {
-        if (!(await this.permission(event))) {
+        if (!(await this.validation(event))) {
+            if (!(await this.permission(event))) {
+                await this.denied(event);
+            }
             if (this.endpoint) return;
         } else {
             await this.callback(event);
@@ -22,10 +27,10 @@ export abstract class Controller<T> {
     }
 
     initiateNestedControllers() {
-        this.nestedControllersInstances = this.nest.map(extension => {
-            let extensionInstance = new extension();
-            extensionInstance.initiateNestedControllers();
-            return extensionInstance;
+        this.nestedControllersInstances = this.nested.map(controllerConstructor => {
+            let controllerInstance = new controllerConstructor();
+            controllerInstance.initiateNestedControllers();
+            return controllerInstance;
         })
     }
 
@@ -44,8 +49,8 @@ export function Endpoint<T extends { new (...args: any[]): {} }>(constructor: T)
     }
 }
 
-export function Nest<T>(container: ControllerFabric<T>[]) {
-    return function(constructor: ControllerFabric<T>) {
+export function Nest<T>(container: ControllerConstructor<T>[]) {
+    return function(constructor: ControllerConstructor<T>) {
         container.push(constructor);
     }
 }

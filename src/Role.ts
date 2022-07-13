@@ -16,7 +16,7 @@ export default class Role implements IRole {
     public inherits: Role[];
 
     public hasPermission(id: string) {
-        let inheritedPermissions = this.inherits.map(r => r.permissions).reduce((a, b) => a .concat(b));
+        let inheritedPermissions = this.inherits.map(r => r.permissions).reduce((a, b) => a.concat(b));
         return this.permissions.concat(inheritedPermissions).some(permission => permission.id === id);
     }
 

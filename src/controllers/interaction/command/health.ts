@@ -10,7 +10,7 @@ import health from "../../../structures/permissions/health";
 
 export class HealthController extends CommandController {
     public name = 'health';
-    public oerm: Permission = health;
+    public perm: Permission = health;
 
     public async callback(interaction: CommandInteraction<CacheType>) {
         let latency = new Date().getTime() - interaction.createdTimestamp;

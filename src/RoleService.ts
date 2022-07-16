@@ -2,15 +2,22 @@ import { Guild, GuildMember } from "discord.js";
 import { APIInteractionGuildMember } from 'discord-api-types/v9';
 import Role from "./Role";
 import member from "./structures/roles/member";
+import Permission from "./Permission";
+import moderator from "./structures/roles/moderator";
+import administrator from "./structures/roles/administrator";
 
 
 export default class RoleService {
-    static list: Role[] = [
-        member
+    static readonly list: Role[] = [
+        member,
+        moderator,
+        administrator
     ];
 
     static getOwned(member: GuildMember | APIInteractionGuildMember, guild?: Guild) {
         let listedRolesNames = RoleService.list.map(r => r.name);
+
+        console.log(member);
 
         let memberRoles;
         if (member instanceof GuildMember) {
@@ -31,7 +38,7 @@ export default class RoleService {
         return owned.sort((a, b) => b.weight - a.weight)[0].weight;
     }
 
-    static async hasPermission(member: GuildMember | APIInteractionGuildMember, id: string, guild?: Guild) {
+    static async hasPermission(member: GuildMember | APIInteractionGuildMember, permission: Permission, guild?: Guild) {
         if (member instanceof GuildMember) {
             if (member.permissions.has('ADMINISTRATOR')) return true;
         } else {
@@ -40,7 +47,6 @@ export default class RoleService {
         }
         
         let ownedRoles = RoleService.getOwned(member, guild);
-        console.log(ownedRoles);
-        return ownedRoles.some(role => role.hasPermission(id));
+        return ownedRoles.some(role => role.hasPermission(permission));
     }
 }

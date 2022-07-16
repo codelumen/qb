@@ -2,8 +2,8 @@ import * as shedule from 'node-schedule';
 
 
 export default abstract class Updater<T> {
-    public updateTimeoutTime: string
-    public updateCycleInterval: shedule.RecurrenceRule;
+    public readonly updateTimeoutTime: string
+    public readonly updateCycleInterval: shedule.RecurrenceRule;
     public updateCycle: shedule.Job;
 
     abstract load(data: T);

@@ -3,8 +3,8 @@ import { client } from "../client";
 
 
 export default class Emoji {
-    public name: string;
-    public cache: GuildEmoji;
+    public readonly name: string;
+    public readonly cache: GuildEmoji;
 
     static load(name: string) {
         let cache = client.emojis.cache.find(emoji => emoji.name === name);

@@ -7,18 +7,18 @@ export abstract class Controller<T> {
     public validation(event: T): boolean | Promise<boolean> { return true }
     public permission(event: T): boolean | Promise<boolean> { return true }
     public callback(event: T): any | Promise<any> { }
-    public denied(event: T): any | Promise<any> {}
+    public denied(event: T): any | Promise<any> { }
 
     public get nested(): ControllerConstructor<T>[] { return [] }
 
     async handle(event: T) {
-        if (!(await this.validation(event))) {
+        if (await this.validation(event)) {
             if (!(await this.permission(event))) {
                 await this.denied(event);
+                return;
             }
-            if (this.endpoint) return;
-        } else {
             await this.callback(event);
+            if (this.endpoint) return;
         }
 
         for (let nestedControllerInstance of this.nestedControllersInstances) {

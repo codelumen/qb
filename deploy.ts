@@ -2,7 +2,6 @@ import { config } from './config';
 import { REST } from '@discordjs/rest';
 import { Routes } from 'discord-api-types/v9';
 import commands from './src/structures/commands';
-import fs from 'node:fs';
 import { Log } from './src/utils/Log';
 
 

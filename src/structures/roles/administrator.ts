@@ -3,8 +3,8 @@ import moderator from "./moderator";
 
 
 export default new Role({
-    name: 'Модератор',
-    weight: 50,
+    name: 'Администратор',
+    weight: 100,
     permissions: [
         // soon
     ],

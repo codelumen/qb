@@ -1,14 +1,14 @@
 export interface IPermission {
-    id: string,
-    description: string,
-    nested?: Permission[]
+    readonly id: string,
+    readonly description: string,
+    readonly nested?: Permission[]
 }
 
 
 export default class Permission implements IPermission {
-    public id: string;
-    public description: string;
-    public nested: Permission[];
+    public readonly id: string;
+    public readonly description: string;
+    public readonly nested: Permission[];
 
     public toJSON(): string {
         return JSON.stringify({
@@ -18,10 +18,10 @@ export default class Permission implements IPermission {
         });
     }
 
-    public includes(id: string): boolean {
-        if (id === this.id) return true;
+    public includes(permission: Permission): boolean {
+        if (permission.id === this.id) return true;
         for (let nested of this.nested) {
-            if (nested.includes(id)) return true;
+            if (nested.includes(permission)) return true;
         }
     }
 
